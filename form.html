@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Admissão • Fidel</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  </head>
+<body>
+  <div class="bg-shapes"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand-badge">F</div>
+<div class="topbar-text">
+        <h1>Ficha de Admissão</h1>
+        <p id="whoami">Carregando…</p>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn" href="./admin.html" id="adminLink" style="display:none;">Admin</a>
+        <button class="btn" id="btnLogout">Sair</button>
+      </div>
+    </header>
+
+    <!-- DADOS PESSOAIS -->
+    <section class="card">
+      <div class="card-title">
+        <div class="icon-badge">🧑‍💼</div>
+        <h2>Dados do Colaborador</h2>
+      </div>
+
+      <form id="mainForm">
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Nome completo</span>
+            <input name="nome" required />
+          </label>
+
+          <label class="field">
+            <span>CPF</span>
+            <input name="cpf" inputmode="numeric" maxlength="11" required />
+            <small class="hint">Somente números, 11 dígitos</small>
+          </label>
+
+          <label class="field">
+            <span>Data de nascimento</span>
+            <input name="nascimento" type="date" required />
+            <small class="hint">No PDF sai dd/mm/aaaa</small>
+          </label>
+
+          <label class="field">
+            <span>E-mail</span>
+            <input name="email" type="email" />
+          </label>
+
+          <label class="field">
+            <span>Telefone</span>
+            <input name="tel" inputmode="numeric" placeholder="Somente números" />
+            <small class="hint">Digite apenas números (DDD + telefone).</small>
+          </label>
+
+          <label class="field">
+            <span>Estado civil</span>
+            <select name="estado_civil" id="estadoCivil" required>
+              <option value="">Selecione</option>
+              <option>Solteiro(a)</option>
+              <option>Casado(a)</option>
+              <option>União Estável</option>
+              <option>Divorciado(a)</option>
+              <option>Viúvo(a)</option>
+            </select>
+          </label>
+
+          <label class="field" id="wrapDataCasamento" style="display:none;">
+            <span>Data de casamento</span>
+            <input name="data_casamento" type="date" />
+          </label>
+
+          <label class="field">
+            <span>Nome da mãe</span>
+            <input name="mae" />
+          </label>
+
+          <label class="field">
+            <span>Nome do pai</span>
+            <input name="pai" />
+          </label>
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Naturalidade (cidade)</span>
+            <input name="naturalidade_cidade" />
+          </label>
+          <label class="field">
+            <span>Naturalidade (UF)</span>
+            <select name="naturalidade_uf" data-uf-select required>
+              <option value="">Selecione</option>
+            </select>
+          </label>
+
+          <!-- Indicação e Emergência foram movidos para depois da CNH (antes dos documentos) -->
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>RG (número)</span>
+            <input name="rg_numero" />
+          </label>
+          <label class="field">
+            <span>RG (órgão emissor)</span>
+            <input name="rg_orgao" placeholder="SSP" />
+          </label>
+          <label class="field">
+            <span>RG (UF)</span>
+            <select name="rg_uf" data-uf-select></select>
+          </label>
+          <label class="field">
+            <span>Data de emissão do RG</span>
+            <input name="rg_emissao" type="date" />
+          </label>
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>CNH (número)</span>
+            <input name="cnh_numero" />
+          </label>
+          <label class="field">
+            <span>CNH (categoria)</span>
+            <select name="cnh_categoria" id="cnhCategoria">
+              <option value="">Selecione</option>
+              <option value="A">A — Moto</option>
+              <option value="B">B — Carro</option>
+              <option value="AB">AB — Carro e Moto</option>
+              <option value="C">C — Carga</option>
+              <option value="D">D — Passageiros</option>
+              <option value="E">E — Carreta</option>
+              <option value="AC">AC — Moto + Carga</option>
+              <option value="AD">AD — Moto + Passageiros</option>
+              <option value="AE">AE — Moto + Carreta</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Vencimento CNH</span>
+            <input name="cnh_vencimento" type="date" />
+          </label>
+        </div>
+
+        <!-- Indicação + Contato de emergência (após CNH) -->
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Indicação (nome)</span>
+            <input name="indicacao_nome" />
+          </label>
+          <label class="field">
+            <span>Indicação (telefone)</span>
+            <input name="indicacao_tel" inputmode="numeric" placeholder="Somente números" />
+          </label>
+          <label class="field">
+            <span>Contato de emergência (nome)</span>
+            <input name="emerg_nome" required />
+          </label>
+          <label class="field">
+            <span>Contato de emergência (telefone)</span>
+            <input name="emerg_tel" inputmode="numeric" placeholder="Somente números" required />
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ENDEREÇO -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">🏠</div>
+          <h3>Endereço</h3>
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Logradouro (Rua/Avenida)</span>
+            <input name="logradouro" required />
+          </label>
+          <label class="field">
+            <span>Número</span>
+            <input name="numero" required />
+          </label>
+          <label class="field">
+            <span>Complemento</span>
+            <input name="complemento" />
+          </label>
+          <label class="field">
+            <span>Bairro</span>
+            <input name="bairro" required />
+          </label>
+          <label class="field">
+            <span>Cidade</span>
+            <input name="cidade" required />
+          </label>
+          <label class="field">
+            <span>UF</span>
+            <select name="end_uf" data-uf-select required></select>
+          </label>
+          <label class="field">
+            <span>CEP</span>
+            <input name="cep" inputmode="numeric" maxlength="8" required />
+          </label>
+          <label class="field">
+            <span>Local de referência</span>
+            <input name="referencia" />
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DADOS BANCÁRIOS -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">🏦</div>
+          <h3>Dados Bancários</h3>
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Banco</span>
+            <input name="banco" value="Itaú" readonly />
+            <small class="hint">Obrigatório: Banco Itaú</small>
+          </label>
+          <label class="field">
+            <span>Agência</span>
+            <input name="agencia" required />
+          </label>
+          <label class="field">
+            <span>Conta</span>
+            <input name="conta" required />
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- DEPENDENTES IRPF -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">👨‍👩‍👧‍👦</div>
+          <h3>Dependentes IRPF</h3>
+        </div>
+        <div id="depsIRPF" class="repeater"></div>
+        <button class="btn" type="button" id="addDepIR">+ Adicionar dependente IRPF</button>
+
+        <div class="divider"></div>
+
+        <!-- PLANO DE SAÚDE -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">🩺</div>
+          <h3>Plano de Saúde</h3>
+        </div>
+
+        <div class="grid grid-3">
+          <label class="field">
+            <span>Possui plano atualmente?</span>
+            <select name="plano_possui">
+              <option value="Não" selected>Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Operadora</span>
+            <input name="plano_operadora" />
+          </label>
+          <label class="field">
+            <span>Matrícula / Nº Beneficiário</span>
+            <input name="plano_matricula" />
+          </label>
+        </div>
+
+        <div class="card-subtitle" style="margin-top:10px;">
+          <div class="icon-badge sm">🧾</div>
+          <h3>Dependentes Plano de Saúde</h3>
+        </div>
+        <div id="depsPLANO" class="repeater"></div>
+        <button class="btn" type="button" id="addDepPL">+ Adicionar dependente Plano</button>
+
+        <div class="divider"></div>
+
+        <!-- FOTO + ASSINATURA -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">📸</div>
+          <h3>Foto e Assinatura</h3>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="field">
+            <span>Foto 3x4 (com validação de rosto)</span>
+            <div class="note">
+              <b>Orientações:</b> esteja em local bem iluminado (sem sol direto), não cubra o rosto (óculos escuros/máscara) e mantenha o rosto centralizado.
+            </div>
+
+            <div class="actions" style="margin:10px 0;">
+              <button class="btn" type="button" id="btnOpenCamera">Abrir câmera</button>
+              <button class="btn" type="button" id="btnCapture" disabled>Capturar</button>
+              <span id="cameraStatus" class="msg"></span>
+            </div>
+
+            <div class="preview-box">
+              <video id="video" autoplay playsinline style="display:none;"></video>
+              <img id="fotoPreview" alt="Pré-visualização" style="display:none;" />
+            </div>
+
+            <input type="file" id="fotoFile" accept="image/*" required />
+            <small class="hint">A foto é usada nos 2 PDFs. Se a detecção de rosto não estiver disponível no seu navegador, o sistema apenas exibirá um aviso.</small>
+          </div>
+
+          <div class="field">
+            <span>Assinatura (use mouse ou dedo)</span>
+            <div class="sig-wrap">
+              <canvas id="sigCanvas" width="700" height="220"></canvas>
+              <div class="sig-actions">
+                <button class="btn" type="button" id="sigClear">Limpar</button>
+              </div>
+            </div>
+            <small class="hint">Assinatura única usada nos 2 PDFs. Não precisa nome.</small>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ANEXOS -->
+        <div class="card-subtitle">
+          <div class="icon-badge sm">📎</div>
+          <h3>Anexos (PDF legível)</h3>
+        </div>
+
+        <div class="note">
+          ✅ O sistema avalia legibilidade (PDF e imagem). Se a pontuação estiver baixa, ele avisa antes de enviar.
+        </div>
+
+        <div id="docs" class="docs"></div>
+
+        <div class="actions bottom">
+          <button class="btn" type="button" id="btnSaveDraft">Salvar rascunho</button>
+          <button class="btn" type="button" id="btnClearDraft">Limpar rascunho</button>
+          <span class="spacer"></span>
+          <button class="btn" type="button" id="btnPreview">Pré-visualizar PDFs</button>
+          <button class="btn primary" type="submit" id="btnSend">Gerar PDFs + ZIP + Enviar</button>
+        </div>
+
+        <div id="formMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <span id="footerUser"></span>
+    </footer>
+  </main>
+
+  <!-- libs (UMD / compatível com abrir localmente) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/legacy/build/pdf.min.js"></script>
+
+  <!-- scripts do sistema -->
+  <script src="./js/config.js"></script>
+  <script src="./js/supabaseClient.js"></script>
+  <script src="./js/legibility.js"></script>
+  <script src="./js/pdf.js"></script>
+  <script src="./js/zip.js"></script>
+  <script src="./js/form.js"></script>
+</body>
+</html>

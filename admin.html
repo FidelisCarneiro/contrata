@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Admissão • Fidel | Admin</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="icon" href="./assets/logo-hc4.png" />
+</head>
+<body>
+  <div class="bg-shapes"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">Sistema de Admissão • Fidel</div>
+      <div class="topbar-text">
+        <h1>Painel do Administrador</h1>
+        <p id="whoami">Carregando…</p>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn" href="./form.html">Ir para Formulário</a>
+        <button class="btn" id="btnLogout">Sair</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-title">
+        <div class="icon-badge">👤</div>
+        <h2>Cadastrar usuário</h2>
+      </div>
+
+      <form id="createUserForm" class="grid grid-3">
+        <label class="field">
+          <span>Nome</span>
+          <input id="cu_name" required />
+        </label>
+        <label class="field">
+          <span>CPF (11 dígitos)</span>
+          <input id="cu_cpf" inputmode="numeric" maxlength="11" required />
+          <small class="hint">Senha inicial = 6 primeiros dígitos do CPF</small>
+        </label>
+        <label class="field">
+          <span>Perfil</span>
+          <select id="cu_role">
+            <option value="PREENCHEDOR" selected>PREENCHEDOR</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Ativo?</span>
+          <select id="cu_active">
+            <option value="true" selected>Sim</option>
+            <option value="false">Não</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Criar usuário</button>
+        </div>
+
+        <div id="createMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <div class="icon-badge">🔁</div>
+        <h2>Reset de senha</h2>
+      </div>
+
+      <form id="resetForm" class="grid grid-3">
+        <label class="field">
+          <span>User ID (auth.users)</span>
+          <input id="rp_userid" placeholder="Cole o user_id do perfil" required />
+        </label>
+        <label class="field">
+          <span>CPF do usuário</span>
+          <input id="rp_cpf" inputmode="numeric" maxlength="11" required />
+        </label>
+
+        <div class="actions">
+          <button class="btn warn" type="submit">Resetar senha</button>
+        </div>
+
+        <div id="resetMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <div class="icon-badge">✉️</div>
+        <h2>E-mail de notificação</h2>
+      </div>
+
+      <form id="emailForm" class="grid">
+        <label class="field">
+          <span>Enviar para</span>
+          <input id="notifyEmail" type="email" placeholder="fidelis.carneiro@hc.eng.br" />
+          <small class="hint">Salva na tabela <b>app_settings</b> (id=1). Se RLS bloquear, me avise que eu te passo a policy.</small>
+        </label>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Salvar</button>
+        </div>
+
+        <div id="emailMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <span>Usuário logado aparecerá no rodapé dos PDFs automaticamente.</span>
+    </footer>
+  </main>
+
+  <!-- libs (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/config.js"></script>
+  <script src="./js/supabaseClient.js"></script>
+  <script src="./js/admin.js"></script>
+</body>
+</html>

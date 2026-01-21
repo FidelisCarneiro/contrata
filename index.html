@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Admissão • Fidel</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="bg-shapes"></div>
+
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">F</div>
+        <div class="topbar-text">
+          <h1>Sistema de Admissão</h1>
+          <p>Entre com CPF + senha para preencher sua ficha.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-title">
+        <div class="icon-badge">🔐</div>
+        <h2>Entrar</h2>
+      </div>
+
+      <form id="loginForm" class="grid">
+        <label class="field">
+          <span>CPF</span>
+          <input id="cpf" inputmode="numeric" maxlength="11" placeholder="Somente números (11 dígitos)" required />
+          <small class="hint">Ex.: 05717864647</small>
+        </label>
+
+        <label class="field">
+          <span>Senha</span>
+          <input id="password" type="password" placeholder="Sua senha" required />
+          <small class="hint">Se for seu primeiro acesso: use os 6 primeiros dígitos do CPF.</small>
+        </label>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Entrar</button>
+          <button class="btn" type="button" id="btnForgot">Esqueci a senha</button>
+        </div>
+
+        <div id="loginMsg" class="msg"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <span>Sistema de Admissão • Fidel</span>
+    </footer>
+  </main>
+
+  <!-- libs (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/config.js"></script>
+  <script src="./js/supabaseClient.js"></script>
+  <script src="./js/auth.js"></script>
+</body>
+</html>
