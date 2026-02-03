@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Calendário 2026 — Consórcio HC2</title>
+
+  <style>
+    :root{
+      --navy:#0f2554;
+      --orange:#e56a2e;
+
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --line:#e6ecf5;
+      --text:#0b1220;
+      --muted:#6b7280;
+
+      /* CORES (eventos) */
+      --c-nacional:#f4d24d;     /* amarelo */
+      --c-folga:#8ed39a;        /* verde */
+      --c-recesso:#87baf2;      /* azul */
+      --c-ponto:#f3a1c6;        /* rosa */
+      --c-comp:#b49bf2;         /* roxo */
+      --c-municipal:#f2a07b;    /* laranja */
+
+      --shadow-soft: 0 6px 14px rgba(15,37,84,.06);
+      --radius: 14px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font: 13px/1.25 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+      color:var(--text);
+      background: var(--bg);
+    }
+
+    /* ======= TOP BAR ======= */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246,248,252,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 14px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width: 210px;
+    }
+    .brand img{
+      height: 32px; width:auto; display:block;
+      border-radius: 8px; background:#fff; border:1px solid var(--line);
+      box-shadow: var(--shadow-soft); padding: 4px;
+    }
+    .meta{ display:flex; flex-direction:column; gap:1px; }
+    .meta strong{ font-size:14px; color:var(--navy); letter-spacing:.02em;}
+    .meta span{ font-size:11px; color:var(--muted); font-weight:600; }
+
+    .title{ flex:1; min-width: 260px; display:flex; flex-direction:column; gap:2px;}
+    .title h1{ margin:0; font-size:15px; color:var(--navy); letter-spacing:.02em; }
+    .title p{ margin:0; font-size:12px; color:var(--muted); font-weight:600; }
+
+    .actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 9px; border-radius:999px;
+      border:1px solid var(--line); background:#fff;
+      box-shadow: var(--shadow-soft);
+      font-weight:900; color: var(--navy);
+    }
+    .btn{
+      appearance:none; border:1px solid var(--line); background:#fff; color:var(--navy);
+      border-radius: 12px; padding: 8px 10px; font-weight:900; cursor:pointer;
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* ======= PAGE ======= */
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 10px 14px 12px; }
+
+    .months{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    @media (max-width: 1050px){ .months{ grid-template-columns: repeat(2,1fr);} }
+    @media (max-width: 700px){ .months{ grid-template-columns: 1fr;} .meta{ display:none; } }
+
+    .month{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+    }
+
+    /* ======= CABEÇALHO DO MÊS COM CAMPANHA + FAIXA ======= */
+    .month-head{
+      padding: 6px 8px 6px 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:8px;
+      cursor: help;
+      border-bottom: 1px solid rgba(15,37,84,.10);
+      position: relative;
+    }
+
+    /* ✅ faixa lateral (cor via CSS var) */
+    .month-head::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width: 6px;
+      background: var(--accent, #d1d5db);
+    }
+
+    .mname{
+      font-weight: 1000;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      display:flex; align-items:center; gap:8px;
+      font-size:11px;
+      min-width: 0;
+      color:#0f1a33;
+    }
+
+    .ribbon{
+      font-size: 13px;
+      line-height: 1;
+      transform: translateY(-.5px);
+      flex:0 0 auto;
+    }
+
+    .mcolor{
+      width: 10px; height:10px; border-radius:50%;
+      border: 1px solid rgba(15,37,84,.18);
+      flex:0 0 auto;
+      background: #fff;
+    }
+
+    .theme{
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform:none;
+      font-size: 10.8px;
+      opacity:.96;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .yr{
+      font-weight: 900;
+      font-size:11px;
+      color:#0f1a33;
+      opacity:.9;
+    }
+
+    /* fundos pastel por mês */
+    .mh-white   { background: #f3f4f6; }
+    .mh-orange  { background: #fff3e8; }
+    .mh-lilac   { background: #f5f0ff; }
+    .mh-green   { background: #ecfdf3; }
+    .mh-yellow  { background: #fffbe6; }
+    .mh-red     { background: #fff0f0; }
+    .mh-pink    { background: #fff0f6; }
+    .mh-blue    { background: #eef4ff; }
+
+    .month-head:hover{ filter: brightness(.985); }
+
+    table.cal{ width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
+    .cal th{
+      font-size: 10px;
+      padding: 5px 0;
+      color: var(--navy);
+      background: #f3f6ff;
+      border-bottom: 1px solid var(--line);
+      font-weight:950;
+    }
+    .cal td{
+      height: 26px;
+      text-align:center;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      font-weight:900;
+      color: #0f1a33;
+      position:relative;
+      background:#fff;
+      user-select:none;
+    }
+    .cal tr:last-child td{ border-bottom:0; }
+    .cal td:last-child{ border-right:0; }
+
+    .cal td.muted{
+      color: rgba(107,114,128,.55);
+      background:#fbfcff;
+      font-weight:700;
+    }
+
+    /* dias com evento (cores) */
+    .cal td.mark{ border-radius: 10px; }
+    .t-nacional{ background: var(--c-nacional) !important; }
+    .t-folga{ background: var(--c-folga) !important; }
+    .t-recesso{ background: var(--c-recesso) !important; }
+    .t-ponto{ background: var(--c-ponto) !important; }
+    .t-comp{ background: var(--c-comp) !important; }
+    .t-municipal{ background: var(--c-municipal) !important; }
+
+    .cal td.mark{
+      cursor: pointer;
+      outline: 2px solid rgba(15,37,84,.06);
+      outline-offset:-2px;
+      transition: transform .08s ease, box-shadow .18s ease;
+    }
+    .cal td.mark:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(15,37,84,.12);
+      z-index: 2;
+    }
+
+    /* Tooltip geral (dias e meses) */
+    .tooltip{
+      position: fixed;
+      z-index: 9999;
+      pointer-events:none;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity .12s ease, transform .12s ease;
+      background: rgba(15,37,84,.95);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: 9px 10px;
+      box-shadow: 0 16px 30px rgba(0,0,0,.18);
+      max-width: 360px;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    .tooltip strong{ display:block; margin-bottom:4px; font-size:12px; letter-spacing:.01em; }
+    .tooltip small{ opacity:.92; font-weight:800; }
+
+    /* ======= FOOT ======= */
+    .foot{
+      margin-top: 8px;
+      display:grid;
+      grid-template-columns: 1.05fr 1.95fr;
+      gap: 8px;
+      align-items:start;
+    }
+    @media (max-width: 900px){ .foot{ grid-template-columns:1fr; } }
+
+    .box{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 9px;
+      box-shadow: var(--shadow-soft);
+    }
+    .box h3{
+      margin:0 0 6px;
+      font-size: 11px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      color: var(--navy);
+    }
+    .legendRow{
+      display:flex; flex-wrap:wrap; gap:8px 10px;
+      color: var(--navy);
+      font-weight:900; font-size:10.5px;
+    }
+    .key{ display:flex; align-items:center; gap:7px; white-space:nowrap; }
+    .sw{ width:11px; height:11px; border-radius:4px; border:1px solid rgba(15,37,84,.12); }
+
+    /* mini legenda campanhas */
+    .campMini{
+      margin-top: 8px;
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+    }
+    .campGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px 10px;
+    }
+    @media (max-width: 520px){ .campGrid{ grid-template-columns:1fr; } }
+
+    .citem{
+      display:flex; align-items:center; gap:7px;
+      font-weight:900;
+      color:#0f1a33;
+      font-size:10.3px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cchip{
+      width:10px;height:10px;border-radius:50%;
+      border:1px solid rgba(15,37,84,.18);
+      flex:0 0 auto;
+    }
+
+    /* Eventos em UMA linha */
+    .eventsGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 7px;
+    }
+    @media (max-width: 600px){ .eventsGrid{ grid-template-columns: 1fr; } }
+
+    .ev{
+      display:flex;
+      gap:7px;
+      align-items:center;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding: 5px 6px;
+      background:#fbfcff;
+    }
+    .dot{ width:8px;height:8px;border-radius:50%; flex:0 0 auto; }
+    .dateChip{
+      min-width: 44px; text-align:center; font-weight: 1000;
+      color: var(--navy);
+      border:1px solid rgba(15,37,84,.12);
+      background:#fff; border-radius: 999px;
+      padding: 2px 6px; line-height: 1.05; font-size: 9.8px; flex:0 0 auto;
+    }
+    .txt{
+      font-weight: 950; color:#0f1a33; line-height: 1.1; flex:1;
+      font-size: 10.8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hint{ margin-top: 5px; color: var(--muted); font-weight:700; font-size: 10px; }
+
+    /* ======= PRINT ======= */
+    @media print{
+      @page{ size: A4 landscape; margin: 5mm; }
+      body{ background:#fff; }
+
+      .btn, .chip, .tooltip{ display:none !important; }
+
+      .topbar{ position: static; border-bottom:0; background:#fff; }
+      .topbar-inner{ padding: 0 0 4mm 0; max-width:none; }
+      .wrap{ max-width:none; padding:0; }
+
+      .months{
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 5px !important;
+        margin-top: 0 !important;
+      }
+
+      .month{ box-shadow:none !important; border-radius: 10px !important; }
+      .month-head{ padding: 3px 5px 3px 8px !important; }
+      .month-head::before{ width: 5px !important; }
+
+      .mname{ font-size: 9.2px !important; gap:5px !important; }
+      .theme{ font-size: 8.4px !important; max-width: 160px !important; }
+      .ribbon{ font-size: 10px !important; }
+      .mcolor{ width:8px !important; height:8px !important; }
+      .yr{ font-size: 9.2px !important; }
+
+      .cal th{ font-size: 8.6px !important; padding: 2.5px 0 !important; }
+      .cal td{
+        height: 16px !important;
+        font-size: 8.8px !important;
+        border-right: 1px solid #dfe6f2 !important;
+        border-bottom: 1px solid #dfe6f2 !important;
+      }
+      .cal td.mark{ border-radius: 6px !important; }
+
+      .foot{ margin-top: 5px !important; gap: 5px !important; }
+      .box{ box-shadow:none !important; padding: 6px 7px !important; }
+      .box h3{ font-size: 9.6px !important; margin-bottom: 5px !important; }
+
+      .legendRow{ font-size: 9.2px !important; gap:6px 8px !important; }
+      .sw{ width:10px !important; height:10px !important; }
+
+      .campMini{ margin-top: 6px !important; padding-top: 6px !important; }
+      .campGrid{ grid-template-columns: repeat(4, 1fr) !important; gap: 4px 8px !important; }
+      .citem{ font-size: 8.6px !important; }
+      .cchip{ width:8px !important; height:8px !important; }
+
+      .eventsGrid{ grid-template-columns: repeat(3, 1fr) !important; gap: 3px 5px !important; }
+      .ev{ padding: 3px 5px !important; border-radius: 10px !important; }
+      .dot{ width:7px !important; height:7px !important; }
+      .dateChip{ min-width: 38px !important; font-size: 8.4px !important; padding: 1px 5px !important; }
+      .txt{ font-size: 8.7px !important; }
+      .hint{ display:none !important; }
+
+      *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img
+          alt="Logo Consórcio HC2"
+          src="https://consorciohc-my.sharepoint.com/personal/fidelis_carneiro_hc_eng_br/Documents/HC2/Identidade%20Visual/logo_laranja_azul-png.png"
+        />
+        <div class="meta">
+          <strong>Consórcio HC2</strong>
+          <span>Calendário anual • feriados, folgas e compensações</span>
+        </div>
+      </div>
+
+      <div class="title">
+        <h1>CALENDÁRIO 2026 — CONSÓRCIO HC2</h1>
+        <p>Dica: passe o mouse em um dia colorido ou no cabeçalho do mês para ver o motivo/campanha.</p>
+      </div>
+
+      <div class="actions">
+        <div class="chip" id="countChip">0 marcações destacadas</div>
+        <button class="btn" id="btnPrint">🖨️ Imprimir (A4 paisagem)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="months" id="months"></section>
+
+    <section class="foot">
+      <aside class="box">
+        <h3>Legenda (eventos)</h3>
+        <div class="legendRow">
+          <div class="key"><span class="sw" style="background:var(--c-nacional)"></span>Feriado Nacional</div>
+          <div class="key"><span class="sw" style="background:var(--c-municipal)"></span>Feriado Municipal</div>
+          <div class="key"><span class="sw" style="background:var(--c-folga)"></span>Folga de Pagamento</div>
+          <div class="key"><span class="sw" style="background:var(--c-ponto)"></span>Ponto Facultativo</div>
+          <div class="key"><span class="sw" style="background:var(--c-comp)"></span>Compensação</div>
+          <div class="key"><span class="sw" style="background:var(--c-recesso)"></span>Recesso</div>
+        </div>
+
+        <div class="campMini">
+          <h3 style="margin-top:0">🎗️ Campanhas por mês</h3>
+          <div class="campGrid" id="campGrid"></div>
+        </div>
+
+        <div class="hint">Para as cores saírem no PDF: marque “Gráficos de segundo plano”.</div>
+      </aside>
+
+      <article class="box">
+        <h3>Eventos principais 2026 (HC2)</h3>
+        <div class="eventsGrid" id="eventsGrid"></div>
+      </article>
+    </section>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const YEAR = 2026;
+
+    const MONTHS = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+    const MONTHS_FULL = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const DOW = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+
+    const TYPE = {
+      nacional:  { cls:"t-nacional",  color:"var(--c-nacional)",  label:"Feriado Nacional" },
+      municipal: { cls:"t-municipal", color:"var(--c-municipal)", label:"Feriado Municipal (Itaboraí)" },
+      folga:     { cls:"t-folga",     color:"var(--c-folga)",     label:"Folga de Pagamento" },
+      ponto:     { cls:"t-ponto",     color:"var(--c-ponto)",     label:"Ponto Facultativo" },
+      comp:      { cls:"t-comp",      color:"var(--c-comp)",      label:"Compensação" },
+      recesso:   { cls:"t-recesso",   color:"var(--c-recesso)",   label:"Recesso" },
+    };
+
+    const CAMPAIGNS = [
+      { head:"mh-white",  chip:"#ffffff", name:"Branco",   short:"Saúde mental", desc:"Janeiro Branco — conscientização e cuidado com a saúde mental." },
+      { head:"mh-orange", chip:"#f59e0b", name:"Laranja",  short:"Leucemia", desc:"Fevereiro Laranja — conscientização sobre leucemia e doação de medula." },
+      { head:"mh-lilac",  chip:"#a78bfa", name:"Lilás",    short:"Colo do útero", desc:"Março Lilás — prevenção do câncer do colo do útero." },
+      { head:"mh-green",  chip:"#22c55e", name:"Verde",    short:"Segurança no trabalho", desc:"Abril Verde — foco em segurança e saúde no trabalho." },
+      { head:"mh-yellow", chip:"#facc15", name:"Amarelo",  short:"Segurança no trânsito", desc:"Maio Amarelo — atenção e segurança no trânsito." },
+      { head:"mh-red",    chip:"#ef4444", name:"Vermelho", short:"Doação de sangue", desc:"Junho Vermelho — incentivo à doação de sangue." },
+      { head:"mh-yellow", chip:"#facc15", name:"Amarelo",  short:"Hepatites / câncer ósseo", desc:"Julho Amarelo — hepatites virais (e conscientização)." },
+      { head:"mh-lilac",  chip:"#a78bfa", name:"Lilás",    short:"Violência contra a mulher", desc:"Agosto Lilás — combate à violência contra a mulher." },
+      { head:"mh-yellow", chip:"#facc15", name:"Amarelo",  short:"Prevenção ao suicídio", desc:"Setembro Amarelo — prevenção ao suicídio e valorização da vida." },
+      { head:"mh-pink",   chip:"#fb7185", name:"Rosa",     short:"Câncer de mama", desc:"Outubro Rosa — prevenção do câncer de mama." },
+      { head:"mh-blue",   chip:"#3b82f6", name:"Azul",     short:"Câncer de próstata", desc:"Novembro Azul — prevenção do câncer de próstata." },
+      { head:"mh-orange", chip:"#f59e0b", name:"Laranja",  short:"Câncer de pele", desc:"Dezembro Laranja — prevenção do câncer de pele." },
+    ];
+
+    const EVENTS = [
+      { date:"2026-01-01", type:"nacional",  name:"Confraternização Universal", note:"" },
+      { date:"2026-01-02", type:"recesso",   name:"Recesso de fim de ano", note:"sexta-feira" },
+
+      { date:"2026-02-06", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-02-16", type:"ponto",     name:"Carnaval (ponto facultativo)", note:"segunda-feira" },
+      { date:"2026-02-17", type:"ponto",     name:"Carnaval (ponto facultativo)", note:"terça-feira" },
+      { date:"2026-02-18", type:"comp",      name:"Compensação", note:"referente ao carnaval" },
+      { date:"2026-02-21", type:"comp",      name:"Compensação (sábado)", note:"dias 16 e 18" },
+
+      { date:"2026-03-06", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+
+      { date:"2026-04-03", type:"nacional",  name:"Sexta-feira Santa", note:"" },
+      { date:"2026-04-10", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-04-21", type:"nacional",  name:"Tiradentes", note:"" },
+      { date:"2026-04-23", type:"municipal", name:"São Jorge (Itaboraí)", note:"" },
+
+      { date:"2026-05-01", type:"nacional",  name:"Dia do Trabalho", note:"" },
+      { date:"2026-05-08", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-05-22", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+
+      { date:"2026-06-04", type:"nacional",  name:"Corpus Christi", note:"quinta-feira" },
+      { date:"2026-06-12", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-06-24", type:"municipal", name:"Padroeiro de Itaboraí", note:"" },
+
+      { date:"2026-07-10", type:"folga",     name:"Folga de pagamento", note:"(conforme calendário)" },
+
+      { date:"2026-08-07", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+
+      { date:"2026-09-07", type:"nacional",  name:"Independência do Brasil", note:"" },
+      { date:"2026-09-11", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+
+      { date:"2026-10-09", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-10-12", type:"nacional",  name:"Nossa Senhora Aparecida", note:"" },
+
+      { date:"2026-11-02", type:"nacional",  name:"Finados", note:"" },
+      { date:"2026-11-13", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-11-15", type:"nacional",  name:"Proclamação da República", note:"domingo" },
+      { date:"2026-11-20", type:"nacional",  name:"Consciência Negra", note:"sexta-feira" },
+
+      { date:"2026-12-11", type:"folga",     name:"Folga de pagamento", note:"sexta-feira" },
+      { date:"2026-12-25", type:"nacional",  name:"Natal", note:"" },
+    ];
+
+    const map = new Map(EVENTS.map(e=>[e.date,e]));
+    const monthsEl = document.getElementById("months");
+    const eventsGrid = document.getElementById("eventsGrid");
+    const campGrid = document.getElementById("campGrid");
+    const countChip = document.getElementById("countChip");
+
+    const tooltip = document.getElementById("tooltip");
+    function moveTip(e){
+      tooltip.style.left = (e.clientX + 14) + "px";
+      tooltip.style.top  = (e.clientY + 14) + "px";
+    }
+    function showTipHTML(html){
+      tooltip.innerHTML = html;
+      tooltip.style.opacity = "1";
+      tooltip.style.transform = "translateY(0)";
+    }
+    function hideTip(){
+      tooltip.style.opacity = "0";
+      tooltip.style.transform = "translateY(6px)";
+    }
+    function fmtBR(dateStr){
+      const [y,m,d]=dateStr.split("-");
+      return `${d}/${m}/${y}`;
+    }
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function fmtShort(dateStr){
+      const [y,m,d]=dateStr.split("-");
+      return `${d}/${m}`;
+    }
+
+    function buildMonth(m){
+      const first = new Date(YEAR, m, 1);
+      const last  = new Date(YEAR, m+1, 0);
+      const firstDow = (first.getDay() + 6) % 7;
+      const prevLast = new Date(YEAR, m, 0).getDate();
+
+      const camp = CAMPAIGNS[m];
+
+      const card = document.createElement("article");
+      card.className="month";
+      card.innerHTML=`
+        <div class="month-head ${camp.head}" data-month="${m}" style="--accent:${camp.chip}">
+          <div class="mname" title="${camp.desc}">
+            <span class="ribbon" aria-hidden="true">🎗️</span>
+            <span class="mcolor" style="background:${camp.chip}"></span>
+            ${MONTHS[m]} — <span class="theme">${camp.short}</span>
+          </div>
+          <div class="yr">${YEAR}</div>
+        </div>
+        <table class="cal">
+          <thead><tr>${DOW.map(d=>`<th>${d}</th>`).join("")}</tr></thead>
+          <tbody></tbody>
+        </table>
+      `;
+
+      const head = card.querySelector(".month-head");
+      head.addEventListener("mouseenter", ()=>{
+        const html = `<strong>${MONTHS_FULL[m]} • ${camp.name}</strong>${camp.desc}`;
+        showTipHTML(html);
+      });
+      head.addEventListener("mousemove", moveTip);
+      head.addEventListener("mouseleave", hideTip);
+
+      const tbody = card.querySelector("tbody");
+      let day=1, next=1;
+
+      for(let r=0;r<6;r++){
+        const tr = document.createElement("tr");
+        for(let c=0;c<7;c++){
+          const i=r*7+c;
+          const td=document.createElement("td");
+
+          if(i<firstDow){
+            td.textContent = prevLast - (firstDow - 1 - i);
+            td.classList.add("muted");
+          }else if(day<=last.getDate()){
+            td.textContent = day;
+
+            const dateStr = `${YEAR}-${pad2(m+1)}-${pad2(day)}`;
+            const ev = map.get(dateStr);
+
+            if(ev){
+              td.classList.add("mark", TYPE[ev.type].cls);
+
+              td.addEventListener("mouseenter", ()=>{
+                const t = TYPE[ev.type];
+                const html = `<strong>${fmtBR(dateStr)} • ${t.label}</strong>${ev.name}${ev.note?`<br><small>${ev.note}</small>`:""}`;
+                showTipHTML(html);
+              });
+              td.addEventListener("mousemove", moveTip);
+              td.addEventListener("mouseleave", hideTip);
+            }
+
+            day++;
+          }else{
+            td.textContent = next++;
+            td.classList.add("muted");
+          }
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      return card;
+    }
+
+    function renderCalendar(){
+      monthsEl.innerHTML="";
+      for(let m=0;m<12;m++) monthsEl.appendChild(buildMonth(m));
+      countChip.textContent = `${EVENTS.length} marcações destacadas`;
+    }
+
+    function renderEvents(){
+      eventsGrid.innerHTML = "";
+      const sorted = [...EVENTS].sort((a,b)=>a.date.localeCompare(b.date));
+      for(const ev of sorted){
+        const t = TYPE[ev.type];
+        const item = document.createElement("div");
+        item.className = "ev";
+        item.innerHTML = `
+          <div class="dot" style="background:${t.color}"></div>
+          <div class="dateChip">${fmtShort(ev.date)}</div>
+          <div class="txt" title="${ev.name} - ${t.label}${ev.note ? " ("+ev.note+")" : ""}">
+            ${ev.name} - ${t.label}
+          </div>
+        `;
+        eventsGrid.appendChild(item);
+      }
+    }
+
+    function renderCampaignMini(){
+      campGrid.innerHTML = "";
+      for(let m=0;m<12;m++){
+        const camp = CAMPAIGNS[m];
+        const div = document.createElement("div");
+        div.className = "citem";
+        div.title = `${MONTHS_FULL[m]} — ${camp.name}: ${camp.desc}`;
+        div.innerHTML = `
+          <span class="cchip" style="background:${camp.chip}"></span>
+          ${MONTHS[m]} — ${camp.short}
+        `;
+        campGrid.appendChild(div);
+      }
+    }
+
+    document.getElementById("btnPrint").addEventListener("click", ()=>window.print());
+
+    renderCalendar();
+    renderEvents();
+    renderCampaignMini();
+  </script>
+</body>
+</html>
